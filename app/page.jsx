@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from 'next/image';
 import { assets } from './../assets/assets';
 import Sidebar from './../components/Sidebar';
+import PromtBox from './../components/PromtBox';
 
 export default function Home() {
   const [expand, setExpand] = useState(false); 
@@ -30,7 +31,7 @@ export default function Home() {
           ):(
             <div></div>
           )}
-          {/* promt-box */}
+          <PromtBox isLoading={isLoading} setIsLoading={setIsLoading}/>
           <p className="text-xs absolute bottom-1 text-gray-500">AI-generated, for reference only</p>
         </div>
       </div>
