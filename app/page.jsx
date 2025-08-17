@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { assets } from './../assets/assets';
 import Sidebar from './../components/Sidebar';
 import PromtBox from './../components/PromtBox';
+import Message from './../components/Message';
 
 export default function Home() {
   const [expand, setExpand] = useState(false); 
@@ -20,7 +21,7 @@ export default function Home() {
             <Image className="opacity-70" src={assets.chat_icon} alt="" />
           </div>
 
-          {messages.length === 0 ? (
+          {messages.length !== 0 ? (
                    <>
                     <div className="flex items-center gap-3">
                       <Image src={assets.logo_icon} alt="" className="h-16 w-15"/>
@@ -29,7 +30,9 @@ export default function Home() {
                     <p className="text-sm mt-2">How can I help you today?</p>
                    </>
           ):(
-            <div></div>
+            <div>
+              <Message role='ai' content='what is next js'/>
+            </div>
           )}
           <PromtBox isLoading={isLoading} setIsLoading={setIsLoading}/>
           <p className="text-xs absolute bottom-1 text-gray-500">AI-generated, for reference only</p>
