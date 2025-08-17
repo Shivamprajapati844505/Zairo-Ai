@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-let cached = gloabal.mongoose || {conn : null, promise: null};
+let cached = global.mongoose || {conn : null, promise: null};
 
 export default async function connectDb(){
     if(cached.conn) return cached.conn;
