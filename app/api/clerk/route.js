@@ -1,6 +1,6 @@
 import { Webhook } from "svix";
 import connectDB from "@/config/db";
-import User from "@model/User";
+import User from "/models/User.js";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";  
 
