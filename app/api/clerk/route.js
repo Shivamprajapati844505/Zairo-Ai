@@ -1,25 +1,30 @@
 import { Webhook } from "svix";
 import connectDB from "@/config/db";
-import User from "/models/User.js";
+import User from "@/models/User";
 import { headers } from "next/headers";
-import { NextRequest } from "next/server";  
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const wh = new Webhook(process.env.SIGNING_SECRET);
-  const headerPayload = await headers();
+  const headerPayload = headers();
 
   const svixHeaders = {
-    "svix-id": headerPayload.get("svix-id"),          
-    "svix-timestamp": headerPayload.get("svix-timestamp"),          
+    "svix-id": headerPayload.get("svix-id"),
+    "svix-timestamp": headerPayload.get("svix-timestamp"),
     "svix-signature": headerPayload.get("svix-signature"),
   };
 
-  // payload properly read
   const payload = await req.json();
   const body = JSON.stringify(payload);
-  const { data, type } = wh.verify(body, svixHeaders);
 
-  
+  let data, type;
+  try {
+    ({ data, type } = wh.verify(body, svixHeaders));
+  } catch (err) {
+    console.error(" Webhook verification failed:", err.message);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
+
   const userData = {
     _id: data.id,
     email: data.email_addresses[0].email_address,
@@ -34,7 +39,7 @@ export async function POST(req) {
       await User.create(userData);
       break;
     case "user.updated":
-      await User.findByIdAndUpdate(data.id, userData);
+      await User.findByIdAndUpdate(data.id, userData, { new: true });
       break;
     case "user.deleted":
       await User.findByIdAndDelete(data.id);
@@ -43,5 +48,5 @@ export async function POST(req) {
       console.log("Unhandled event type:", type);
   }
 
-  return NextRequest.json({ message: "Event received" }, { status: 200 });
+  return NextResponse.json({ message: "Event received" }, { status: 200 });
 }
