@@ -5,13 +5,16 @@ import MarkDown from  'react-markdown';
 import Prism from 'prismjs'
 
 const Message = ({role, content}) =>{
+
   useEffect(()=>{
-    Prism.highlight()
+    Prism.highlightAll()
   },[content])
-}
 
+  const copyMessage = ()=>{
+      navigator.clipboard.writeText(content)
+      toast.success('Message copied to clickboard');
+  }
 
-const Message = ({ role, content }) => {
   return (
     <div className="flex flex-col items-center w-full max-w-3xl text-sm">
       <div className={`flex flex-col w-full mb-8 ${role === 'user' ? 'items-end' : ''}`}>
@@ -27,12 +30,12 @@ const Message = ({ role, content }) => {
             <div className="flex items-center gap-2 opacity-70">
               {role === 'user' ? (
                 <>
-                  <Image src={assets.copy_icon} alt="" className="w-4 cursor-pointer" />
+                  <Image onClick={copyMessage} src={assets.copy_icon} alt="" className="w-4 cursor-pointer" />
                   <Image src={assets.pencil_icon} alt="" className="w-4 cursor-pointer" />
                 </>
               ) : (
                 <>
-                  <Image src={assets.pencil_icon} alt="" className="w-4 cursor-pointer" />
+                  <Image  onClick={copyMessage} src={assets.copy_icon} alt="" className="w-4 cursor-pointer" />
                   <Image src={assets.regenerate_icon} alt="" className="w-4 cursor-pointer" />
                   <Image src={assets.like_icon} alt="" className="w-4 cursor-pointer" />
                   <Image src={assets.dislike_icon} alt="" className="w-4 cursor-pointer" />
