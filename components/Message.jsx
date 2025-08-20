@@ -1,6 +1,15 @@
 import React from 'react'
 import Image from 'next/image';
 import { assets } from './../assets/assets';
+import MarkDown from  'react-markdown';
+import Prism from 'prismjs'
+
+const Message = ({role, content}) =>{
+  useEffect(()=>{
+    Prism.highlight()
+  },[content])
+}
+
 
 const Message = ({ role, content }) => {
   return (
@@ -42,7 +51,10 @@ const Message = ({ role, content }) => {
                 alt=""
                 className="w-9 h-9 p-1 border border-white/15 rounded-full"
               />
-              <div className="space-y-4 w-full overflow-y-auto">{content}</div>
+              <div className="space-y-4 w-full overflow-y-auto">
+                <MarkDown>
+                {content}
+                </MarkDown></div>
             </>
           )}
         </div>
