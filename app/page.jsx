@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from 'next/image';
 import { assets } from './../assets/assets';
 import Sidebar from './../components/Sidebar';
-import PromtBox from './../components/PromtBox';
+import PromptBox from './../components/PromptBox';
 import Message from './../components/Message';
 import { useAppContext } from '@/context/AppContext';
 
@@ -70,7 +70,7 @@ export default function Home() {
               }
             </div>
           )}
-          <PromtBox isLoading={isLoading} setIsLoading={setIsLoading}/>
+          <PromptBox isLoading={isLoading} setIsLoading={setIsLoading}/>
           <p className="text-xs absolute bottom-1 text-gray-500">AI-generated, for reference only</p>
         </div>
       </div>

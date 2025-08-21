@@ -2,28 +2,29 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { assets } from "./../assets/assets";
 import { useAppContext } from '@/context/AppContext';
-import { axios } from 'axios';
+import axios  from 'axios';
 import { toast } from 'react-hot-toast';
 
 
 const ChatLabel = ({setOpenMenu, openMenu, id, name}) => {
      
-    const {fetchUserChats, chats, setSelectedChat} = useAppContext()
+    const {fetchUsersChats, chats, setSelectedChat} = useAppContext()
 
     const selectChat =()=>{
        const chatData = chats.find(chat => chat._id === id)
        setSelectedChat(chatData)
        console.log(chatData);
     }
+
     const renameHandler = async  () =>{
       try {
           const newName = prompt('Enter new name')
           if(!newName) return 
           const {data} = await axios.post('/api/chat/rename',{chatId: id, name: newName})
           if(data.success){
-            fetchUserChats()
+            fetchUsersChats()
             setOpenMenu({id: 0, open: false })
-            toast.succes(data.message)
+            toast.success(data.message)
           }else{
             toast.error(data.message)
           }
@@ -38,7 +39,7 @@ const ChatLabel = ({setOpenMenu, openMenu, id, name}) => {
       if(!confirm) return
       const {data} = await axios.post('api/chat/delete',{chatId : id})
       if(data.success){
-        fetchUserChats()
+        fetchUsersChats()
         setOpenMenu({id: 0, open: false})
         toast.success(data.message)
       } 

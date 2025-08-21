@@ -1,8 +1,10 @@
-import React from 'react'
+import {useEffect} from 'react'
 import Image from 'next/image';
 import { assets } from './../assets/assets';
 import MarkDown from  'react-markdown';
 import Prism from 'prismjs'
+import { toast } from 'react-hot-toast';
+
 
 const Message = ({role, content}) =>{
 

@@ -15,7 +15,7 @@ export async function POST(req){
   try {
       const {userId} = getAuth(req)
 
-      const {chatId, promt} = await req.json();
+      const {chatId, prompt} = await req.json();
       if(!userId){
         return NextResponse.json({
             success:false,
@@ -43,6 +43,6 @@ export async function POST(req){
     data.save();
      return NextResponse.json({success:true, data: message})
   } catch (error) {
-     return NextResponse.json({success:false, data: message}) 
+     return NextResponse.json({success:false, error: error.message}) 
   }
 }
