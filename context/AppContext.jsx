@@ -29,21 +29,19 @@ export const AppContextProvider = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+          },});
 
       fetchUsersChats();
     } catch (error) {
       toast.error(error.message);
     }
   };
+ 
 
   const fetchUsersChats = async () => {
     try {
       const token = await getToken();
-
-      const { data } = await axios.get("/api/chat/get", {
+  const { data } = await axios.get("/api/chat/get", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -58,6 +56,9 @@ export const AppContextProvider = ({ children }) => {
           return fetchUsersChats();
         } else {
           data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+          setSelectedChat(data.data[0]);
+          console.log(data.data[0]);
         }
       } else {
         toast.error(data.message);

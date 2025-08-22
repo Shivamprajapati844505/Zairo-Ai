@@ -6,9 +6,7 @@ export default async function connectDB(){
     if(cached.conn) return cached.conn;
     if(!cached.promise){
        cached.promise = mongoose.connect(process.env.MONGODB_URI,{
-           dbName: "zairo",
-           useNewUrlParser: true,
-           useUnifiedTopology: true,
+           dbName: "zairo"
             }
        ).then((mongoose)=>mongoose);   
     }

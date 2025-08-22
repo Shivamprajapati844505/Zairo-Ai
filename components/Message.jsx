@@ -11,6 +11,7 @@ const Message = ({role, content}) =>{
   useEffect(()=>{
     Prism.highlightAll()
   },[content])
+  
 
   const copyMessage = ()=>{
       navigator.clipboard.writeText(content)

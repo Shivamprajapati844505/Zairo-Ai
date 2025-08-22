@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from "@/context/AppContext";
 import { assets } from "./../assets/assets";
 import Image from "next/image";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 const PromptBox = ({ isLoading, setIsLoading }) => {
   const [prompt, setPrompt] = useState("");
-  const { user, setSelectedChat } = useAppContext();
+  const { user, chats, setChats, selectedChat, setSelectedChat } = useAppContext();
 
+  
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -17,15 +18,13 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
   };
 
   const sendPrompt = async (e) => {
-    e.preventDefault();
-
-    if (!user) return toast.error("Login to send message");
-    if (isLoading) return toast.error("Wait for the previous prompt response");
-
     const promptCopy = prompt;
     try {
-      setIsLoading(true);
-      setPrompt("");
+       e.preventDefault();
+        if (!user) return toast.error("Login to send message");
+        if (isLoading) return toast.error("Wait for the previous prompt response");
+        setIsLoading(true);
+        setPrompt("");
 
       const userPrompt = {
         role: "user",
@@ -34,14 +33,32 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
       };
 
       // sirf selectedChat me messages save karenge
-      setSelectedChat((prev) => ({
-        ...prev,
-        messages: [...(prev?.messages || []), userPrompt],
-      }));
+      setChats((prevChats) => prevChats.map((chat)=> chat._id === selectedChat._id ?
+      {
+        ...chat,
+        messages:[...chat.messages, userPrompt]
+      }:chat
+    ));
 
-      const { data } = await axios.post("/api/chat/ai", { prompt });
+
+      // saving user prompt in  seleceted chat
+      setSelectedChat((prev)=>({
+        ...prev,
+        messages:[...prev.messages, userPrompt]
+      }))
+
+
+      const { data } = await axios.post("/api/chat/ai", {
+        chatId:selectedChat._id,
+        prompt,
+      });
+      console.log("API Response:", data);
 
       if (data.success) {
+        setChats((prevChats)=>prevChats.map((chat)=>chat._id === selectedChat._id ? {...chat, messages:[...chat.messages, data.data]}:chat))
+        // console.log("Assistant Message:", data.data);
+
+
         const message = data.data.content;
         const messageTokens = message.split(" ");
         let assistantMessage = {
@@ -52,7 +69,7 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
 
         setSelectedChat((prev) => ({
           ...prev,
-          messages: [...(prev?.messages || []), assistantMessage],
+          messages: [...(prev.messages || []), assistantMessage],
         }));
 
         for (let i = 0; i < messageTokens.length; i++) {
@@ -65,7 +82,7 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
               ];
               return { ...prev, messages: updatedMessages };
             });
-          }, i * 80);
+          }, i * 100);
         }
       } else {
         toast.error(data.message);
