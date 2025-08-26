@@ -17,7 +17,6 @@ const Sidebar = ({ expand, setExpand }) => {
       }`}
     >
       <div>
-        {/* Logo + Sidebar Toggle */}
         <div
           className={`flex ${
             expand ? "flex-row gap-10" : "flex-col items-center gap-8"

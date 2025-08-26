@@ -5,27 +5,28 @@ import { NextResponse } from "next/server";
 import Chat from "@/models/Chat";
 import connectDB from "@/config/db";
 
+
 const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.ZAIRO_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
 });
 
 export async function POST(req) {
   try {
     const { userId } = getAuth(req);
-
     const { chatId, prompt } = await req.json();
+
     if (!userId) {
       return NextResponse.json({
         success: false,
         message: "User not authenticated",
       });
     }
+
     await connectDB();
 
     const data = await Chat.findOne({ userId, _id: chatId });
 
-    
     const userPrompt = {
       role: "user",
       content: prompt,
@@ -34,20 +35,31 @@ export async function POST(req) {
 
     data.messages.push(userPrompt);
 
+
     const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
-      model: "deepseek-chat",
-      store: true,
+      model: "openai/gpt-5", 
+      messages: data.messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
+      max_tokens: 1000, 
     });
 
-    const message = completion.choices[0].message;
-    message.timestamp = Date.now();
+    const rawMessage = completion.choices[0].message;
+
+
+const message = {
+  role: rawMessage.role || "assistant",
+  content: rawMessage.content || "",   
+  timestamp: Date.now(),
+};
 
     data.messages.push(message);
     await data.save();
 
     return NextResponse.json({ success: true, data: message });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ success: false, error: error.message });
   }
 }

@@ -32,7 +32,6 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
         timestamp: Date.now(),
       };
 
-      // sirf selectedChat me messages save karenge
       setChats((prevChats) => prevChats.map((chat)=> chat._id === selectedChat._id ?
       {
         ...chat,
@@ -41,7 +40,6 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
     ));
 
 
-      // saving user prompt in  seleceted chat
       setSelectedChat((prev)=>({
         ...prev,
         messages:[...prev.messages, userPrompt]
@@ -56,7 +54,7 @@ const PromptBox = ({ isLoading, setIsLoading }) => {
 
       if (data.success) {
         setChats((prevChats)=>prevChats.map((chat)=>chat._id === selectedChat._id ? {...chat, messages:[...chat.messages, data.data]}:chat))
-        // console.log("Assistant Message:", data.data);
+
 
 
         const message = data.data.content;
